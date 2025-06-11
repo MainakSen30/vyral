@@ -18,7 +18,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     tasks.withType<JavaCompile> {
-        options.compilerArgs.add("-Xlint:deprecation")
+        options.compilerArgs.addAll(listOf("-Xlint:deprecation"))
     }
 
     kotlinOptions {
