@@ -1,25 +1,26 @@
 //this will have all the information about the user and its methods
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:social_media_app/features/profile/domain/entities/profile_user.dart';
 import 'package:social_media_app/features/profile/domain/repository/profile_repo.dart';
 
 class FirebaseProfileRepo implements ProfileRepo {
   final FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
   @override
-  Future<ProfileUser?> fetchUserProfile(String uid) async {
+  Future<ProfileUser?> fetchUserProfile() async {
     try {
       //user document from firestore
       final userDocument = await firebaseFirestore
           .collection('users')
-          .doc(uid)
+          .doc(FirebaseAuth.instance.currentUser!.uid)
           .get();
       if (userDocument.exists) {
         final userData = userDocument.data()!;
         return ProfileUser(
-          uid: uid,
+          uid: FirebaseAuth.instance.currentUser!.uid,
           email: userData['email'],
           name: userData['name'],
-          bio: userData['bio'],
+          bio: userData['bio'] ?? '',
           profileImageUrl: userData['profileImageUrl'],
         );
       }

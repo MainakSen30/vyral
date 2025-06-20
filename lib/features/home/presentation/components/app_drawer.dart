@@ -40,11 +40,9 @@ class AppDrawer extends StatelessWidget {
                 onTap: () {
                   Navigator.of(context).pop();
                   //get current user id
-                  final user = context.read<AuthCubit>().currentUser;
-                  String? uid = user!.uid;
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => ProfilePage(uid: uid,)),
+                    MaterialPageRoute(builder: (context) => const ProfilePage()),
                   );
                 },
               ),
