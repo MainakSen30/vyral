@@ -21,7 +21,7 @@ class FirebaseProfileRepo implements ProfileRepo {
           email: userData['email'],
           name: userData['name'],
           bio: userData['bio'] ?? '',
-          profileImageUrl: userData['profileImageUrl'],
+          profileImageUrl: userData['profileImageUrl'] ?? '',
         );
       }
       return null;
