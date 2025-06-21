@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_media_app/features/authentication/domain/entities/app_user.dart';
 import 'package:social_media_app/features/authentication/presentation/cubits/auth_cubit.dart';
+import 'package:social_media_app/features/profile/presentation/components/bio_box.dart';
 import 'package:social_media_app/features/profile/presentation/cubits/profile_cubit.dart';
 import 'package:social_media_app/features/profile/presentation/cubits/profile_states.dart';
+import 'package:social_media_app/features/profile/presentation/pages/edit_profile_page.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -46,6 +48,85 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               foregroundColor: Theme.of(context).colorScheme.primary,
               centerTitle: true,
+              actions: [
+                IconButton(
+                  onPressed: () => Navigator.push(
+                    context, MaterialPageRoute(
+                      builder: (context) => EditProfilePage(),
+                      )
+                    ),
+                  icon: Icon(Icons.edit),
+                ),
+              ],
+            ),
+            body: Column(
+              children: [
+                //email
+                Text(
+                  user.email,
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+                SizedBox(height: 25.0),
+                //profile picture
+                Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.secondary,
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  height: 120,
+                  width: 120,
+                  padding: const EdgeInsets.all(25),
+                  child: Center(
+                    child: Icon(
+                      Icons.person_2_rounded,
+                      size: 50,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 25),
+                //bio
+                Padding(
+                  padding: const EdgeInsets.only(left: 12),
+                  child: Row(
+                    children: [
+                      Text(
+                        'bio',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 18,
+                          fontWeight: FontWeight.w900,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 5,),
+                BioBox(text: user.bio),
+                //posts
+                Padding(
+                  padding: const EdgeInsets.only(left: 12, top: 12),
+                  child: Row(
+                    children: [
+                      Text(
+                        'posts',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 18,
+                          fontWeight: FontWeight.w900,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           );
         }
