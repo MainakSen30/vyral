@@ -52,7 +52,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 IconButton(
                   onPressed: () => Navigator.push(
                     context, MaterialPageRoute(
-                      builder: (context) => EditProfilePage(),
+                      builder: (context) => EditProfilePage(user: user,),
                       )
                     ),
                   icon: Icon(Icons.edit),
