@@ -15,18 +15,54 @@ class EditProfilePage extends StatefulWidget {
 
 class _EditProfilePageState extends State<EditProfilePage> {
   final bioTextController = TextEditingController();
+  //update profile
+  void updateProfile() async {
+    final profileCubit = context.read<ProfileCubit>();
+    if (bioTextController.text.isNotEmpty) {
+      profileCubit.updateProfile(
+        uid: widget.user.uid,
+        newBio: bioTextController.text,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ProfileCubit, ProfileStates>(
       builder: (context, state) {
         //profile loading
-        //profile error
+        if (state is ProfileLoadingState) {
+          return Scaffold(
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 20),
+                  Text(
+                    'Uploading profile',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w900,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
         //profile loaded
         return buildEditPage();
       },
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state is ProfileLoadedState) {
+          Navigator.pop(context);
+        }
+      },
     );
   }
+
   Widget buildEditPage({double uploadProgress = 0.0}) {
     return Scaffold(
       appBar: AppBar(
@@ -40,6 +76,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
         ),
         foregroundColor: Theme.of(context).colorScheme.primary,
         centerTitle: true,
+        actions: [
+          IconButton(onPressed: updateProfile, icon: const Icon(Icons.upload)),
+        ],
       ),
       body: Column(
         children: [
@@ -61,20 +100,20 @@ class _EditProfilePageState extends State<EditProfilePage> {
               ],
             ),
           ),
-          SizedBox(height: 10,),
+          SizedBox(height: 10),
           //bio text field
           Padding(
             padding: const EdgeInsets.all(12),
             child: MyTextField(
-              controller: bioTextController, 
-              hintText: widget.user.bio, 
-              obscureText: false
+              controller: bioTextController,
+              hintText: widget.user.bio,
+              obscureText: false,
             ),
           ),
-            
-          SizedBox(height: 10,),
+
+          SizedBox(height: 10),
         ],
-      )
+      ),
     );
   }
 }

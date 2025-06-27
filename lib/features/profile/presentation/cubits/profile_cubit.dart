@@ -22,9 +22,11 @@ class ProfileCubit extends Cubit<ProfileStates> {
   }
 
   //update user bio and profile picture
-  Future<void> updateProfile({String? newBio}) async {
-    try {
+  Future<void> updateProfile({
+    required String uid,
+    String? newBio}) async {
       emit(ProfileLoadingState());
+    try {
       final currentUser = await profileRepo.fetchUserProfile();
       if (currentUser == null) {
         emit(ProfileErrorState('cannot find user'));
