@@ -108,6 +108,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
               controller: bioTextController,
               hintText: widget.user.bio,
               obscureText: false,
+              minimumLines: 1,
+              maximumLines: 4,
             ),
           ),
 

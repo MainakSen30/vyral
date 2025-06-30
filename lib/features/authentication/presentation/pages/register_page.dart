@@ -119,6 +119,8 @@ class _RegisterPageState extends State<RegisterPage> {
                   controller: nameController,
                   hintText: "name",
                   obscureText: false,
+                  minimumLines: 1,
+                  maximumLines: 1,
                 ),
                 SizedBox(height: 10),
                 //email text field.
@@ -126,6 +128,9 @@ class _RegisterPageState extends State<RegisterPage> {
                   controller: emailController,
                   hintText: "email",
                   obscureText: false,
+                  minimumLines: 1,
+                  maximumLines: 1,
+
                 ),
                 SizedBox(height: 10),
                 //password text field.
@@ -133,6 +138,8 @@ class _RegisterPageState extends State<RegisterPage> {
                   controller: passwordController,
                   hintText: "password",
                   obscureText: true,
+                  minimumLines: 1,
+                  maximumLines: 1,
                 ),
                 SizedBox(height: 10),
                 //confirm password text field.
@@ -140,6 +147,8 @@ class _RegisterPageState extends State<RegisterPage> {
                   controller: confirmPasswordController,
                   hintText: 'Confirm Password',
                   obscureText: true,
+                  minimumLines: 1,
+                  maximumLines: 1,
                 ),
                 //register button
                 SizedBox(height: 10),

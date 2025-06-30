@@ -5,26 +5,29 @@ class MyTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
   final bool obscureText;
+  final int minimumLines;
+  final int maximumLines;
+  
   const MyTextField({
     super.key,
     required this.controller,
     required this.hintText,
     required this.obscureText,
+    required this.minimumLines,
+    required this.maximumLines,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextField(
-      minLines: 1,
-      maxLines: 4,
+      minLines: minimumLines,
+      maxLines: maximumLines,
       controller: controller,
       obscureText: obscureText,
       decoration: InputDecoration(
         //unselected border of the text field.
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(
-            color: Theme.of(context).colorScheme.tertiary,
-          ),
+          borderSide: BorderSide(color: Theme.of(context).colorScheme.tertiary),
           borderRadius: BorderRadius.circular(12),
         ),
         //selected border of the text field.
@@ -36,9 +39,7 @@ class MyTextField extends StatelessWidget {
         ),
         //hint text fior each text field.
         hintText: hintText,
-        hintStyle: TextStyle(
-          color: Theme.of(context).colorScheme.primary
-        ),
+        hintStyle: TextStyle(color: Theme.of(context).colorScheme.primary),
         fillColor: Theme.of(context).colorScheme.tertiary,
         filled: true,
       ),
