@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'dart:typed_data';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -58,6 +60,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
         newProfilePicmobile: imageMobilePath,
         newProfilePicWeb: imageWebBytes,
       );
+    } else {
+      Navigator.pop(context);
     }
   }
 
@@ -98,7 +102,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
-  Widget buildEditPage({double uploadProgress = 0.0}) {
+  Widget buildEditPage() {
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -117,7 +121,94 @@ class _EditProfilePageState extends State<EditProfilePage> {
       ),
       body: Column(
         children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 12),
+            child: Row(
+              children: [
+                Text(
+                  'profile picture',
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 18,
+                    fontWeight: FontWeight.w900,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: 10,),
           //profile picture
+          Center(
+            child: Container(
+              height: 200,
+              width: 200,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.secondary,
+                shape: BoxShape.circle,
+              ),
+              clipBehavior: Clip.hardEdge,
+              //display selected image for mobile.
+              child:
+              (!kIsWeb && imagePickedFile != null)
+              ?
+              Image.file(
+                File(imagePickedFile!.path!),
+                fit: BoxFit.cover,
+              )
+              :
+              //display selected image for web.
+              (kIsWeb && webImage!= null)
+              ?
+              Image.memory(
+                webImage!,
+                fit: BoxFit.cover,
+              )
+              :
+              //if no image selected, display default image.
+              CachedNetworkImage(
+                imageUrl: widget.user.profileImageUrl,
+                //loading
+                placeholder: (context, url) => 
+                CircularProgressIndicator(
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                //error
+                errorWidget: (context, url, error) => 
+                  Icon(
+                    Icons.person_2_rounded,
+                    color: Theme.of(context).colorScheme.primary,
+                    size: 72,
+                  ),
+                //loaded
+                imageBuilder: (context, imageProvider) => 
+                  Image(image: imageProvider),
+              ),
+            ),
+          ),
+          SizedBox(height: 10,),
+          //pick image button
+          Center(
+            child: MaterialButton(
+              color: Theme.of(context).colorScheme.secondary,
+              onPressed: pickImage,
+              elevation: 0.0, // Remove shadow
+              highlightElevation: 0.0, // Remove shadow on press
+              hoverElevation: 0.0, // Remove shadow on hover
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              
+              child: Text(
+                'change profile picture',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w900,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+            ),
+          ),
           //bio text
           Padding(
             padding: const EdgeInsets.only(left: 12),
