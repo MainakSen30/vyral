@@ -24,12 +24,15 @@ import 'package:social_media_app/features/authentication/presentation/pages/auth
 import 'package:social_media_app/features/home/presentation/pages/home_page.dart';
 import 'package:social_media_app/features/profile/data/repository/firebase_profile_repo.dart';
 import 'package:social_media_app/features/profile/presentation/cubits/profile_cubit.dart';
+import 'package:social_media_app/features/storage/data/firebase_storage_repo.dart';
 
 class MyApp extends StatelessWidget {
   //initialize auth repo
-  final authRepo = FireBaseAuthRepo();
+  final firebaseauthRepo = FireBaseAuthRepo();
   //initialize profile repo
-  final profileRepo = FirebaseProfileRepo();
+  final firebaseprofileRepo = FirebaseProfileRepo();
+  //initialize storage repo
+  final firebasestorageRepo = FirebaseStorageRepo();
   MyApp({super.key});
 
   @override
@@ -38,11 +41,14 @@ class MyApp extends StatelessWidget {
       providers: [
         //authcubit
         BlocProvider<AuthCubit>(
-          create: (context) => AuthCubit(authRepo: authRepo)..checkAuth(),
+          create: (context) => AuthCubit(authRepo: firebaseauthRepo)..checkAuth(),
         ),
-        //profilecubit
+       //profilecubit
         BlocProvider<ProfileCubit>(
-          create: (context) => ProfileCubit(profileRepo: profileRepo),
+          create: (context) => ProfileCubit(
+            profileRepo: firebaseprofileRepo,
+            storageRepo: firebasestorageRepo,
+          ),
         ),
       ],
       child: MaterialApp(
