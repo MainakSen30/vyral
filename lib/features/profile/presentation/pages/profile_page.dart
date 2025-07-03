@@ -1,4 +1,5 @@
 //This is the profile page of the user who is logged in to the account.
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_media_app/features/authentication/domain/entities/app_user.dart';
@@ -73,22 +74,34 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 SizedBox(height: 25.0),
                 //profile picture
-                Container(
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.secondary,
-                    borderRadius: BorderRadius.circular(15),
+                CachedNetworkImage(
+                imageUrl: user.profileImageUrl,
+                //loading
+                placeholder: (context, url) => 
+                CircularProgressIndicator(
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                //error
+                errorWidget: (context, url, error) => 
+                  Icon(
+                    Icons.person_2_rounded,
+                    color: Theme.of(context).colorScheme.primary,
+                    size: 72,
                   ),
-                  height: 120,
-                  width: 120,
-                  padding: const EdgeInsets.all(25),
-                  child: Center(
-                    child: Icon(
-                      Icons.person_2_rounded,
-                      size: 50,
-                      color: Theme.of(context).colorScheme.primary,
+                //loaded
+                imageBuilder: (context, imageProvider) => 
+                  Container(
+                    height: 150,
+                    width: 150,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                        image: imageProvider,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
-                ),
+              ),
                 SizedBox(height: 25),
                 //bio
                 Padding(
