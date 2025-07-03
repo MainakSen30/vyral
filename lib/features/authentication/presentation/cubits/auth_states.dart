@@ -3,6 +3,7 @@
 import 'package:social_media_app/features/authentication/domain/entities/app_user.dart';
 
 abstract class AuthState {
+  get user => null;
 
 }
 //initial state

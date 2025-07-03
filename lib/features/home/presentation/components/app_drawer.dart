@@ -19,11 +19,14 @@ class AppDrawer extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 50.0),
-                child: Icon(
-                  Icons.person,
-                  size: 100,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
+                child: Text(
+                  "V Y R A L",
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                )
               ),
               //divider line
               Divider(color: Theme.of(context).colorScheme.secondary),
