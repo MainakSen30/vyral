@@ -22,6 +22,8 @@ import 'package:social_media_app/features/authentication/presentation/cubits/aut
 import 'package:social_media_app/features/authentication/presentation/cubits/auth_states.dart';
 import 'package:social_media_app/features/authentication/presentation/pages/auth_page.dart';
 import 'package:social_media_app/features/home/presentation/pages/home_page.dart';
+import 'package:social_media_app/features/posts/data/firebase_post_repo.dart';
+import 'package:social_media_app/features/posts/presentation/cubits/post_cubits.dart';
 import 'package:social_media_app/features/profile/data/repository/firebase_profile_repo.dart';
 import 'package:social_media_app/features/profile/presentation/cubits/profile_cubit.dart';
 import 'package:social_media_app/features/storage/data/firebase_storage_repo.dart';
@@ -33,6 +35,8 @@ class MyApp extends StatelessWidget {
   final firebaseprofileRepo = FirebaseProfileRepo();
   //initialize storage repo
   final firebasestorageRepo = FirebaseStorageRepo();
+  //initialize post repo
+  final firebasePostRepo = FirebasePostRepo();
   MyApp({super.key});
 
   @override
@@ -41,12 +45,20 @@ class MyApp extends StatelessWidget {
       providers: [
         //authcubit
         BlocProvider<AuthCubit>(
-          create: (context) => AuthCubit(authRepo: firebaseauthRepo)..checkAuth(),
+          create: (context) =>
+              AuthCubit(authRepo: firebaseauthRepo)..checkAuth(),
         ),
-       //profilecubit
+        //profilecubit
         BlocProvider<ProfileCubit>(
           create: (context) => ProfileCubit(
             profileRepo: firebaseprofileRepo,
+            storageRepo: firebasestorageRepo,
+          ),
+        ),
+        //postcubit
+        BlocProvider<PostCubits>(
+          create: (context) => PostCubits(
+            postRepo: firebasePostRepo,
             storageRepo: firebasestorageRepo,
           ),
         ),
