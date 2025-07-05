@@ -1,24 +1,42 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:social_media_app/features/posts/presentation/pages/upload_post_page.dart';
 import 'package:social_media_app/features/storage/domain/storage_repo.dart';
 
 class FirebaseStorageRepo implements StorageRepo {
   final FirebaseStorage storage = FirebaseStorage.instance;
+  //profile pictures -> upload to storage
   @override
-  Future<String?> uploadProfileImageOnMobile(
-    String path, 
-    String fileName
-  ) {
+  //mobile platform
+  Future<String?> uploadProfileImageOnMobile(String path, String fileName) {
     return _uploadFile(path, fileName, "profile_images");
   }
 
   @override
+  //web platform
   Future<String?> uploadProfileImageOnWeb(
     Uint8List fileBytes,
     String fileName,
   ) {
     return _uploadFileBytes(fileBytes, fileName, "profile_images");
+  }
+
+  //post pictures -> upload to storage.
+  @override
+  Future<String?> uploadPostImageOnMobile(
+    String path, 
+    String fileName
+  ) {
+    return _uploadFile(path, fileName, "post_images");
+  }
+
+  @override
+  Future<String?> uploadPostImageOnWeb(
+    Uint8List fileBytes,
+    String fileName,
+  ) {
+    return _uploadFileBytes(fileBytes, fileName, "post_images");
   }
 
   //helper methods to get profile picture files

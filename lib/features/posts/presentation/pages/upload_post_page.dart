@@ -143,6 +143,13 @@ class _UploadPostPageState extends State<UploadPostPage> {
         ),
         foregroundColor: Theme.of(context).colorScheme.primary,
         centerTitle: true,
+        actions: [
+          //upload button
+          IconButton(
+            onPressed: uploadPost, 
+            icon: Icon(Icons.upload)
+          ),
+        ],
       ),
       body: Center(
         child: Column(
