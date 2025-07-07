@@ -158,7 +158,22 @@ class _UploadPostPageState extends State<UploadPostPage> {
             if (kIsWeb && webImage != null) Image.memory(webImage!),
             //mobile
             if (!kIsWeb && imagePickedFile != null)
-              Image.file(File(imagePickedFile!.path!), height: 200, width: 200),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                  height: 430,
+                  child: Image.file(
+                    File(imagePickedFile!.path!), 
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
             MaterialButton(
               color: Theme.of(context).colorScheme.secondary,
               onPressed: pickImage,
