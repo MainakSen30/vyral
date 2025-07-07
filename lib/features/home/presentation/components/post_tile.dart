@@ -101,7 +101,6 @@ class _PostTileState extends State<PostTile> {
         //image
         CachedNetworkImage(
           imageUrl: widget.post.imageUrl,
-          height: 430,
           width: double.infinity,
           fit: BoxFit.cover,
           placeholder: (context, url) => SizedBox(height: 430),
