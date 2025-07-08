@@ -1,6 +1,8 @@
 //cubits for the profile user. compare this snippet from profile_cubit.dart:
+//import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:social_media_app/features/profile/domain/entities/profile_user.dart';
 import 'package:social_media_app/features/profile/domain/repository/profile_repo.dart';
 import 'package:social_media_app/features/profile/presentation/cubits/profile_states.dart';
 import 'package:social_media_app/features/storage/domain/storage_repo.dart';
@@ -11,10 +13,10 @@ class ProfileCubit extends Cubit<ProfileStates> {
   ProfileCubit({required this.profileRepo, required this.storageRepo})
     : super(ProfileInitialState());
 
-  Future<void> fetchUserProfile() async {
+  Future<void> fetchUserProfile(String uid) async {
     emit(ProfileLoadingState());
     try {
-      final user = await profileRepo.fetchUserProfile();
+      final user = await profileRepo.fetchUserProfile(uid);
       if (user != null) {
         emit(ProfileLoadedState(user));
       } else {
@@ -23,6 +25,12 @@ class ProfileCubit extends Cubit<ProfileStates> {
     } catch (e) {
       emit(ProfileErrorState(e.toString()));
     }
+  }
+
+  //fetch user profile with a given Uid which is useful for loading posts from many profiles
+  Future<ProfileUser?> getUserProfile(String uid) async {
+    final user = await profileRepo.fetchUserProfile(uid);
+    return user;
   }
 
   //update user bio and profile picture
@@ -34,7 +42,7 @@ class ProfileCubit extends Cubit<ProfileStates> {
   }) async {
     emit(ProfileLoadingState());
     try {
-      final currentUser = await profileRepo.fetchUserProfile();
+      final currentUser = await profileRepo.fetchUserProfile(uid);
       if (currentUser == null) {
         emit(ProfileErrorState('cannot find user'));
         return;
@@ -66,11 +74,11 @@ class ProfileCubit extends Cubit<ProfileStates> {
       //updated profile user
       final updatedUser = currentUser.copyWith(
         newBio: newBio ?? currentUser.bio,
-        newProfileImageUrl: imagedownloadUrl ??currentUser.profileImageUrl,
+        newProfileImageUrl: imagedownloadUrl ?? currentUser.profileImageUrl,
       );
       await profileRepo.updateUserProfile(updatedUser);
       //refetch updated profile
-      await fetchUserProfile();
+      await fetchUserProfile(uid);
     } catch (e) {
       emit(ProfileErrorState('Error updating profile $e'));
     }

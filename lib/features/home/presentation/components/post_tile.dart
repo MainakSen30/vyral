@@ -1,6 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:social_media_app/features/authentication/domain/entities/app_user.dart';
+import 'package:social_media_app/features/authentication/presentation/cubits/auth_cubit.dart';
 import 'package:social_media_app/features/posts/domain/entities/post.dart';
+import 'package:social_media_app/features/posts/presentation/cubits/post_cubits.dart';
+import 'package:social_media_app/features/profile/domain/entities/profile_user.dart';
+import 'package:social_media_app/features/profile/presentation/cubits/profile_cubit.dart';
 
 class PostTile extends StatefulWidget {
   final Post post;
@@ -17,6 +23,36 @@ class PostTile extends StatefulWidget {
 
 class _PostTileState extends State<PostTile> {
   //show options for deletion
+  late final postCubit = context.read<PostCubits>();
+  late final profileCubit = context.read<ProfileCubit>();
+  bool isOwnPost = false;
+
+  //current user
+  AppUser? currentUser;
+  //profile user
+  ProfileUser? postUser;
+
+  void initialize() {
+    super.initState();
+    getCurrentUser();
+    fetchPostUser();
+  }
+
+  void getCurrentUser() {
+    final authCubit = context.read<AuthCubit>();
+    currentUser = authCubit.currentUser;
+    isOwnPost = (widget.post.userId == currentUser!.uid);
+  }
+
+  Future<void> fetchPostUser() async {
+    final fetchedUser = await profileCubit.getUserProfile(widget.post.userId);
+    if (fetchedUser != null) {
+      setState(() {
+        postUser = fetchedUser;
+      });
+    }
+  }
+
   void showOptions() {
     showDialog(
       context: context,

@@ -26,7 +26,7 @@ class AppDrawer extends StatelessWidget {
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
-                )
+                ),
               ),
               //divider line
               Divider(color: Theme.of(context).colorScheme.secondary),
@@ -43,9 +43,13 @@ class AppDrawer extends StatelessWidget {
                 onTap: () {
                   Navigator.of(context).pop();
                   //get current user id
+                  final user = context.read<AuthCubit>().currentUser;
+                  String? uid = user!.uid;
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const ProfilePage()),
+                    MaterialPageRoute(
+                      builder: (context) => ProfilePage(uid: uid,),
+                    ),
                   );
                 },
               ),

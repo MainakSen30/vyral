@@ -7,7 +7,7 @@ import 'package:social_media_app/features/profile/domain/repository/profile_repo
 class FirebaseProfileRepo implements ProfileRepo {
   final FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
   @override
-  Future<ProfileUser?> fetchUserProfile() async {
+  Future<ProfileUser?> fetchUserProfile(String uid) async {
     try {
       //user document from firestore
       final userDocument = await firebaseFirestore

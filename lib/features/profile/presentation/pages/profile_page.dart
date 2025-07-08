@@ -10,7 +10,11 @@ import 'package:social_media_app/features/profile/presentation/cubits/profile_st
 import 'package:social_media_app/features/profile/presentation/pages/edit_profile_page.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+  final String uid;
+  const ProfilePage({
+    super.key,
+    required this.uid
+  });
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -25,7 +29,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    context.read<ProfileCubit>().fetchUserProfile();
+    profileCubit.fetchUserProfile(widget.uid);
   }
 
   @override
@@ -52,10 +56,11 @@ class _ProfilePageState extends State<ProfilePage> {
               actions: [
                 IconButton(
                   onPressed: () => Navigator.push(
-                    context, MaterialPageRoute(
-                      builder: (context) => EditProfilePage(user: user,),
-                      )
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EditProfilePage(user: user),
                     ),
+                  ),
                   icon: Icon(Icons.edit),
                 ),
               ],
@@ -75,22 +80,19 @@ class _ProfilePageState extends State<ProfilePage> {
                 SizedBox(height: 25.0),
                 //profile picture
                 CachedNetworkImage(
-                imageUrl: user.profileImageUrl,
-                //loading
-                placeholder: (context, url) => 
-                CircularProgressIndicator(
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                //error
-                errorWidget: (context, url, error) => 
-                  Icon(
+                  imageUrl: user.profileImageUrl,
+                  //loading
+                  placeholder: (context, url) => CircularProgressIndicator(
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  //error
+                  errorWidget: (context, url, error) => Icon(
                     Icons.person_2_rounded,
                     color: Theme.of(context).colorScheme.primary,
                     size: 72,
                   ),
-                //loaded
-                imageBuilder: (context, imageProvider) => 
-                  Container(
+                  //loaded
+                  imageBuilder: (context, imageProvider) => Container(
                     height: 150,
                     width: 150,
                     decoration: BoxDecoration(
@@ -101,7 +103,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     ),
                   ),
-              ),
+                ),
                 SizedBox(height: 25),
                 //bio
                 Padding(
@@ -120,7 +122,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ],
                   ),
                 ),
-                SizedBox(height: 5,),
+                SizedBox(height: 5),
                 BioBox(text: user.bio),
                 //posts
                 Padding(
