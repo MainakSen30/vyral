@@ -39,10 +39,12 @@ dependencies:
   firebase_core: ^3.13.1
   firebase_auth: ^5.5.4
   cloud_firestore: ^5.6.8
-  firebase_storage: ^12.4.7
+  firebase_storage: ^12.4.9
   flutter_bloc: ^9.1.1
   file_picker: ^10.2.0
   cached_network_image: ^3.4.1
+  grpc: ^4.1.0
+  protobuf: ^4.1.0
 
 dependency_overrides:
   leak_tracker: 11.0.1

@@ -2,5 +2,6 @@
     "cmake.sourceDirectory": "C:/Users/Mainak/Downloads/Flutter_projects/social_media_app/linux",
     "java.home": "C:/Program Files/OpenLogic/jdk-17.0.14.7-hotspot",
     "java.jdt.ls.vmargs": "-Xmx1G -XX:+UseG1GC -XX:+UseStringDeduplication",
-    "java.configuration.updateBuildConfiguration": "automatic"
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "cmake.ignoreCMakeListsMissing": true
 }

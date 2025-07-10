@@ -110,42 +110,78 @@ class _PostTileState extends State<PostTile> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        //name
-        Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                widget.post.userName,
-                style: TextStyle(
-                  fontSize: 18,
+    return Container(
+      margin: EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.secondary,
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      child: Column(
+        children: [
+          //top section profile / name / delete button
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                postUser?.profileImageUrl != null ? CachedNetworkImage(
+                  imageUrl: postUser!.profileImageUrl,
+                  errorWidget: (context, url, error) => const Icon(Icons.person),
+                  imageBuilder: (context, imageProvider) => Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                        image: imageProvider, 
+                        fit: BoxFit.cover
+                      ),
+                    ),
+                  ),
+                ) : const Icon(Icons.person),
+                Text(
+                  widget.post.userName,
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Theme.of(context).colorScheme.inversePrimary,
+                  ),
+                ),
+                //delete button
+                IconButton(
+                  onPressed: showOptions,
+                  icon: Icon(Icons.delete),
                   color: Theme.of(context).colorScheme.inversePrimary,
                 ),
-              ),
-              //delete button
-              IconButton(
-                onPressed: showOptions,
-                icon: Icon(Icons.delete),
-                color: Theme.of(context).colorScheme.inversePrimary,
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        //image
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: CachedNetworkImage(
+      
+          //image
+          CachedNetworkImage(
             imageUrl: widget.post.imageUrl,
             width: double.infinity,
             fit: BoxFit.cover,
             placeholder: (context, url) => SizedBox(height: 430),
             errorWidget: (context, url, error) => Icon(Icons.error),
           ),
-        ),
-      ],
+
+          //caption
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Row(
+              children: [
+                Text(
+                  '${widget.post.userName} : ${widget.post.text} ',
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Theme.of(context).colorScheme.inversePrimary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
