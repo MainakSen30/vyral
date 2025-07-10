@@ -32,7 +32,8 @@ class _PostTileState extends State<PostTile> {
   //profile user
   ProfileUser? postUser;
 
-  void initialize() {
+  @override
+  void initState() {
     super.initState();
     getCurrentUser();
     fetchPostUser();
