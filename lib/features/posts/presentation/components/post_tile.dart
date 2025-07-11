@@ -56,8 +56,6 @@ class _PostTileState extends State<PostTile> {
 
   //toggle like on post
   void toggleLikePost() {
-    //current like status
-    final isLiked = widget.post.likes.contains(currentUser!.uid);
     //update the likes in the Post,
     postCubit.toggleLikePost(widget.post.id, currentUser!.uid);
   }
