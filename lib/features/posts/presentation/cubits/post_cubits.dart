@@ -30,10 +30,7 @@ class PostCubits extends Cubit<PostStates> {
       //handle image from web
       else if (imageBytes != null) {
         emit(PostUploadingState());
-        imageUrl = await storageRepo.uploadPostImageOnWeb(
-          imageBytes,
-          post.id,
-        );
+        imageUrl = await storageRepo.uploadPostImageOnWeb(imageBytes, post.id);
       }
       //create the post
       final newPost = post.copyWith(imageUrl: imageUrl);
@@ -61,6 +58,16 @@ class PostCubits extends Cubit<PostStates> {
       await postRepo.deletePost(postId);
     } catch (e) {
       emit(PostErrorState("Failed to delete post: $e"));
+    }
+  }
+
+  //toggle like on post
+  Future<void> toggleLikePost(String postId, String userId) async {
+    try {
+      await postRepo.toggleLikePost(postId, userId);
+      fetchAllPosts();
+    } catch (e) {
+      emit(PostErrorState("Failed to like the post : $e try again later"));
     }
   }
 }

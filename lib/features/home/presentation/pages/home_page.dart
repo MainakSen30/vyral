@@ -4,7 +4,7 @@ this is the home page of the application having all the posts.
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_media_app/features/home/presentation/components/app_drawer.dart';
-import 'package:social_media_app/features/home/presentation/components/post_tile.dart';
+import 'package:social_media_app/features/posts/presentation/components/post_tile.dart';
 import 'package:social_media_app/features/posts/presentation/cubits/post_cubits.dart';
 import 'package:social_media_app/features/posts/presentation/cubits/post_states.dart';
 import 'package:social_media_app/features/posts/presentation/pages/upload_post_page.dart';

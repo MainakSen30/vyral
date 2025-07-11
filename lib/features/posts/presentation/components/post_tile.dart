@@ -54,6 +54,14 @@ class _PostTileState extends State<PostTile> {
     }
   }
 
+  //toggle like on post
+  void toggleLikePost() {
+    //current like status
+    final isLiked = widget.post.likes.contains(currentUser!.uid);
+    //update the likes in the Post,
+    postCubit.toggleLikePost(widget.post.id, currentUser!.uid);
+  }
+
   void showOptions() {
     showDialog(
       context: context,
@@ -125,21 +133,25 @@ class _PostTileState extends State<PostTile> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                postUser?.profileImageUrl != null ? CachedNetworkImage(
-                  imageUrl: postUser!.profileImageUrl,
-                  errorWidget: (context, url, error) => const Icon(Icons.person),
-                  imageBuilder: (context, imageProvider) => Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                        image: imageProvider, 
-                        fit: BoxFit.cover
-                      ),
-                    ),
-                  ),
-                ) : const Icon(Icons.person),
+                postUser?.profileImageUrl != null
+                    ? CachedNetworkImage(
+                        imageUrl: postUser!.profileImageUrl,
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.person),
+                        imageBuilder: (context, imageProvider) => Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: DecorationImage(
+                              image: imageProvider,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      )
+                    : const Icon(Icons.person),
+                const SizedBox(width: 10),
                 Text(
                   widget.post.userName,
                   style: TextStyle(
@@ -147,16 +159,20 @@ class _PostTileState extends State<PostTile> {
                     color: Theme.of(context).colorScheme.inversePrimary,
                   ),
                 ),
+                const Spacer(),
                 //delete button
-                IconButton(
-                  onPressed: showOptions,
-                  icon: Icon(Icons.delete),
-                  color: Theme.of(context).colorScheme.inversePrimary,
-                ),
+                if (isOwnPost)
+                  GestureDetector(
+                    onTap: showOptions,
+                    child: Icon(
+                      Icons.delete,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
               ],
             ),
           ),
-      
+
           //image
           CachedNetworkImage(
             imageUrl: widget.post.imageUrl,
@@ -165,12 +181,58 @@ class _PostTileState extends State<PostTile> {
             placeholder: (context, url) => SizedBox(height: 430),
             errorWidget: (context, url, error) => Icon(Icons.error),
           ),
-
+          //likes, comments, datetime of posting
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Row(
+              children: [
+                //likes
+                GestureDetector(
+                  onTap: toggleLikePost,
+                  child: Icon(
+                    Icons.favorite,
+                    color: widget.post.likes.contains(currentUser!.uid)
+                    ? Colors.red
+                    : Theme.of(context).colorScheme.inversePrimary,
+                  ),
+                ),
+                const SizedBox(width: 5),
+                Text(widget.post.likes.length.toString()),
+                const SizedBox(width: 15),
+                //comment
+                Icon(Icons.comment_outlined),
+                const SizedBox(width: 5),
+                Text('0'),
+                const Spacer(),
+                //date time
+                Text(widget.post.timeStamp.toString()),
+              ],
+            ),
+          ),
           //caption
           Padding(
             padding: const EdgeInsets.all(12.0),
             child: Row(
               children: [
+                postUser?.profileImageUrl != null
+                    ? CachedNetworkImage(
+                        imageUrl: postUser!.profileImageUrl,
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.person),
+                        imageBuilder: (context, imageProvider) => Container(
+                          width: 25,
+                          height: 25,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: DecorationImage(
+                              image: imageProvider,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      )
+                    : const Icon(Icons.person),
+                const SizedBox(width: 10),
                 Text(
                   '${widget.post.userName} : ${widget.post.text} ',
                   style: TextStyle(
