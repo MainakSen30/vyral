@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:social_media_app/features/posts/domain/entities/comment.dart';
 
 class Post {
   final String id;
@@ -8,6 +9,7 @@ class Post {
   final String imageUrl;
   final DateTime timeStamp;
   final List<String> likes;
+  final List<Comment> comments;
 
   Post({
     required this.id,
@@ -17,6 +19,7 @@ class Post {
     required this.imageUrl,
     required this.timeStamp,
     required this.likes,
+    required this.comments,
   });
 
   Post copyWith({String? imageUrl}) {
@@ -28,6 +31,7 @@ class Post {
       imageUrl: imageUrl ?? this.imageUrl,
       timeStamp: timeStamp,
       likes: likes,
+      comments: comments,
     );
   }
 
@@ -41,11 +45,14 @@ class Post {
       'imageUrl': imageUrl,
       'timeStamp': Timestamp.fromDate(timeStamp),
       'likes': likes,
+      'comments': comments.map((comment) => comment.toJson()).toList(),
     };
   }
 
   //method to convert the JSON file to a post object.
   factory Post.fromJson(Map<String, dynamic> json) {
+    //prepare comments
+    final List<Comment> comments = (json['comments'] as List<dynamic>?)?.map((commentJson) => Comment.fromJson(commentJson)).toList() ?? []; 
     return Post(
       id: json['id'],
       userId: json['userId'],
@@ -54,6 +61,7 @@ class Post {
       imageUrl: json['imageUrl'],
       timeStamp: (json['timeStamp'] as Timestamp).toDate(),
       likes: List<String>.from(json['likes'] ?? []),
+      comments: comments
     );
   }
 }

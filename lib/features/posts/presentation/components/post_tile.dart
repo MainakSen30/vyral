@@ -2,9 +2,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_media_app/features/authentication/domain/entities/app_user.dart';
+import 'package:social_media_app/features/authentication/presentation/components/my_text_field.dart';
 import 'package:social_media_app/features/authentication/presentation/cubits/auth_cubit.dart';
+import 'package:social_media_app/features/posts/domain/entities/comment.dart';
 import 'package:social_media_app/features/posts/domain/entities/post.dart';
 import 'package:social_media_app/features/posts/presentation/cubits/post_cubits.dart';
+import 'package:social_media_app/features/posts/presentation/cubits/post_states.dart';
 import 'package:social_media_app/features/profile/domain/entities/profile_user.dart';
 import 'package:social_media_app/features/profile/presentation/cubits/profile_cubit.dart';
 
@@ -57,7 +60,96 @@ class _PostTileState extends State<PostTile> {
   //toggle like on post
   void toggleLikePost() {
     //update the likes in the Post,
-    postCubit.toggleLikePost(widget.post.id, currentUser!.uid);
+    final isLiked = widget.post.likes.contains(currentUser!.uid);
+    //optimistically like and update the ui
+    setState(() {
+      if (isLiked) {
+        widget.post.likes.remove(currentUser!.uid);
+      } else {
+        widget.post.likes.add(currentUser!.uid);
+      }
+    });
+    postCubit.toggleLikePost(widget.post.id, currentUser!.uid).catchError((
+      error,
+    ) {
+      //if there is an error, revert back to the old values.
+      setState(() {
+        if (isLiked) {
+          widget.post.likes.add(currentUser!.uid);
+        } else {
+          widget.post.likes.remove(currentUser!.uid);
+        }
+      });
+    });
+  }
+
+  //commments
+  //comment text controller
+  final commentTextController = TextEditingController();
+  //open a comment box
+  void openNewCommentBox() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: MyTextField(
+          controller: commentTextController,
+          hintText: "add a new comment...",
+          obscureText: false,
+          minimumLines: 1,
+          maximumLines: 5,
+        ),
+        actions: [
+          //cancel button
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(
+              'Cancel',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+          ),
+          //save button
+          TextButton(
+            onPressed: () {
+              addComment();
+              Navigator.of(context).pop();
+            },
+            child: Text(
+              'Save',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void addComment() {
+    final newComment = Comment(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      postId: widget.post.id,
+      userId: widget.post.userId,
+      userName: widget.post.userName,
+      text: commentTextController.text,
+      timeStamp: DateTime.now(),
+    );
+    //add comment using cubit
+    if (commentTextController.text.isNotEmpty) {
+      postCubit.addComment(widget.post.id, newComment);
+    }
+  }
+
+  @override
+  void dispose() {
+    commentTextController.dispose();
+    super.dispose();
   }
 
   void showOptions() {
@@ -154,7 +246,9 @@ class _PostTileState extends State<PostTile> {
                   widget.post.userName,
                   style: TextStyle(
                     fontSize: 18,
-                    color: Theme.of(context).colorScheme.inversePrimary,
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Poppins',
                   ),
                 ),
                 const Spacer(),
@@ -190,20 +284,47 @@ class _PostTileState extends State<PostTile> {
                   child: Icon(
                     Icons.favorite,
                     color: widget.post.likes.contains(currentUser!.uid)
-                    ? Colors.red
-                    : Theme.of(context).colorScheme.inversePrimary,
+                        ? Colors.red
+                        : Theme.of(context).colorScheme.inversePrimary,
                   ),
                 ),
                 const SizedBox(width: 5),
-                Text(widget.post.likes.length.toString()),
+                Text(
+                  widget.post.likes.length.toString(),
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Poppins',
+                  ),
+                ),
                 const SizedBox(width: 15),
                 //comment
-                Icon(Icons.comment_outlined),
+                GestureDetector(
+                  onTap: openNewCommentBox,
+                  child: Icon(Icons.comment_outlined),
+                ),
                 const SizedBox(width: 5),
-                Text('0'),
+                Text(
+                  widget.post.comments.length.toString(),
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Poppins',
+                  ),
+                ),
                 const Spacer(),
                 //date time
-                Text(widget.post.timeStamp.toString()),
+                Text(
+                  widget.post.timeStamp.toString(),
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.w500,
+                    fontFamily: 'Poppins',
+                  ),
+                ),
               ],
             ),
           ),
@@ -231,14 +352,110 @@ class _PostTileState extends State<PostTile> {
                       )
                     : const Icon(Icons.person),
                 const SizedBox(width: 10),
-                Text(
-                  '${widget.post.userName} : ${widget.post.text} ',
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Theme.of(context).colorScheme.inversePrimary,
+                RichText(
+                  text: TextSpan(
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Theme.of(context).colorScheme.inversePrimary,
+                    ),
+                    children: [
+                      TextSpan(
+                        text: widget.post.userName,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Poppins',
+                        ),
+                      ),
+                      TextSpan(
+                        text: ' : ${widget.post.text}',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w500,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
+            ),
+          ),
+          Divider(color: Theme.of(context).colorScheme.primary),
+          //comments
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: BlocBuilder<PostCubits, PostStates>(
+              builder: (context, state) {
+                //post loaded state.
+                if (state is PostLoadedState) {
+                  //final individual post
+                  final post = state.posts.firstWhere(
+                    (post) => post.id == widget.post.id,
+                  );
+                  if (post.comments.isNotEmpty) {
+                    int showCommentCount = post.comments.length;
+                    //comment section
+                    return ListView.separated(
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 7),
+                      itemCount: showCommentCount,
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        final comment = post.comments[index];
+                        //comment tile ui
+                        return Row(
+                          children: [
+                            postUser?.profileImageUrl != null
+                                ? CachedNetworkImage(
+                                    imageUrl: postUser!.profileImageUrl,
+                                    errorWidget: (context, url, error) =>
+                                        const Icon(Icons.person),
+                                    imageBuilder: (context, imageProvider) =>
+                                        Container(
+                                          width: 20,
+                                          height: 20,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            image: DecorationImage(
+                                              image: imageProvider,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ),
+                                  )
+                                : const Icon(Icons.person),
+                            const SizedBox(width: 5),
+                            Text(
+                              comment.userName,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Poppins',
+                              ),
+                            ),
+                            Text(
+                              ': ${comment.text}',
+                              style: TextStyle(
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w500,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
+                }
+                //post loading state
+                if (state is PostLoadingState) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (state is PostErrorState) {
+                  return Center(child: Text(state.message));
+                } else {
+                  return const SizedBox();
+                }
+              },
             ),
           ),
         ],
