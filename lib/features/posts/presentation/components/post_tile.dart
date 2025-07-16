@@ -136,8 +136,8 @@ class _PostTileState extends State<PostTile> {
     final newComment = Comment(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       postId: widget.post.id,
-      userId: widget.post.userId,
-      userName: widget.post.userName,
+      userId: currentUser!.uid,
+      userName: currentUser!.name,
       text: commentTextController.text,
       timeStamp: DateTime.now(),
     );
