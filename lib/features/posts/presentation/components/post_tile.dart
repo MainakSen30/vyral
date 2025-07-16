@@ -6,6 +6,7 @@ import 'package:social_media_app/features/authentication/presentation/components
 import 'package:social_media_app/features/authentication/presentation/cubits/auth_cubit.dart';
 import 'package:social_media_app/features/posts/domain/entities/comment.dart';
 import 'package:social_media_app/features/posts/domain/entities/post.dart';
+import 'package:social_media_app/features/posts/presentation/components/comment_tile.dart';
 import 'package:social_media_app/features/posts/presentation/cubits/post_cubits.dart';
 import 'package:social_media_app/features/posts/presentation/cubits/post_states.dart';
 import 'package:social_media_app/features/profile/domain/entities/profile_user.dart';
@@ -404,45 +405,7 @@ class _PostTileState extends State<PostTile> {
                       itemBuilder: (context, index) {
                         final comment = post.comments[index];
                         //comment tile ui
-                        return Row(
-                          children: [
-                            postUser?.profileImageUrl != null
-                                ? CachedNetworkImage(
-                                    imageUrl: postUser!.profileImageUrl,
-                                    errorWidget: (context, url, error) =>
-                                        const Icon(Icons.person),
-                                    imageBuilder: (context, imageProvider) =>
-                                        Container(
-                                          width: 20,
-                                          height: 20,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            image: DecorationImage(
-                                              image: imageProvider,
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                        ),
-                                  )
-                                : const Icon(Icons.person),
-                            const SizedBox(width: 5),
-                            Text(
-                              comment.userName,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontFamily: 'Poppins',
-                              ),
-                            ),
-                            Text(
-                              ': ${comment.text}',
-                              style: TextStyle(
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w500,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                            ),
-                          ],
-                        );
+                        return CommentTile(comment: comment, postUser: postUser,);
                       },
                     );
                   }
