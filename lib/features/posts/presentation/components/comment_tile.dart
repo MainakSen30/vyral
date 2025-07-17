@@ -6,6 +6,7 @@ import 'package:social_media_app/features/authentication/presentation/cubits/aut
 import 'package:social_media_app/features/posts/domain/entities/comment.dart';
 import 'package:social_media_app/features/posts/presentation/cubits/post_cubits.dart';
 import 'package:social_media_app/features/profile/domain/entities/profile_user.dart';
+import 'package:social_media_app/features/profile/presentation/pages/profile_page.dart';
 
 class CommentTile extends StatefulWidget {
   final Comment comment;
@@ -95,26 +96,44 @@ class _CommentTileState extends State<CommentTile> {
     return Row(
       children: [
         widget.postUser?.profileImageUrl != null
-            ? CachedNetworkImage(
-                imageUrl: widget.postUser!.profileImageUrl,
-                errorWidget: (context, url, error) => const Icon(Icons.person),
-                imageBuilder: (context, imageProvider) => Container(
-                  width: 20,
-                  height: 20,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                      image: imageProvider,
-                      fit: BoxFit.cover,
+            ? GestureDetector(
+              onTap: () => Navigator.push(
+                context, MaterialPageRoute(
+                  builder: (context) => ProfilePage(
+                    uid: currentUser!.uid
+                    )
+                  )
+                ),
+              child: CachedNetworkImage(
+                  imageUrl: widget.postUser!.profileImageUrl,
+                  errorWidget: (context, url, error) => const Icon(Icons.person),
+                  imageBuilder: (context, imageProvider) => Container(
+                    width: 20,
+                    height: 20,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                        image: imageProvider,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                 ),
-              )
+            )
             : const Icon(Icons.person),
         const SizedBox(width: 5),
-        Text(
-          widget.comment.userName,
-          style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'Poppins'),
+        GestureDetector(
+          onTap: () => Navigator.push(
+            context, MaterialPageRoute(
+              builder: (context) => ProfilePage(
+                uid: currentUser!.uid
+                )
+              )
+            ),
+          child: Text(
+            widget.comment.userName,
+            style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'Poppins'),
+          ),
         ),
         Text(
           ': ${widget.comment.text}',

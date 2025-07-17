@@ -11,6 +11,7 @@ import 'package:social_media_app/features/posts/presentation/cubits/post_cubits.
 import 'package:social_media_app/features/posts/presentation/cubits/post_states.dart';
 import 'package:social_media_app/features/profile/domain/entities/profile_user.dart';
 import 'package:social_media_app/features/profile/presentation/cubits/profile_cubit.dart';
+import 'package:social_media_app/features/profile/presentation/pages/profile_page.dart';
 
 class PostTile extends StatefulWidget {
   final Post post;
@@ -225,31 +226,49 @@ class _PostTileState extends State<PostTile> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 postUser?.profileImageUrl != null
-                    ? CachedNetworkImage(
-                        imageUrl: postUser!.profileImageUrl,
-                        errorWidget: (context, url, error) =>
-                            const Icon(Icons.person),
-                        imageBuilder: (context, imageProvider) => Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
-                              image: imageProvider,
-                              fit: BoxFit.cover,
+                    ? GestureDetector(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                ProfilePage(uid: widget.post.userId),
+                          ),
+                        ),
+                        child: CachedNetworkImage(
+                          imageUrl: postUser!.profileImageUrl,
+                          errorWidget: (context, url, error) =>
+                              const Icon(Icons.person),
+                          imageBuilder: (context, imageProvider) => Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                image: imageProvider,
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                         ),
                       )
                     : const Icon(Icons.person),
                 const SizedBox(width: 10),
-                Text(
-                  widget.post.userName,
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Theme.of(context).colorScheme.primary,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Poppins',
+                GestureDetector(
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          ProfilePage(uid: widget.post.userId),
+                    ),
+                  ),
+                  child: Text(
+                    widget.post.userName,
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Theme.of(context).colorScheme.primary,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Poppins',
+                    ),
                   ),
                 ),
                 const Spacer(),
@@ -335,48 +354,63 @@ class _PostTileState extends State<PostTile> {
             child: Row(
               children: [
                 postUser?.profileImageUrl != null
-                    ? CachedNetworkImage(
-                        imageUrl: postUser!.profileImageUrl,
-                        errorWidget: (context, url, error) =>
-                            const Icon(Icons.person),
-                        imageBuilder: (context, imageProvider) => Container(
-                          width: 25,
-                          height: 25,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
-                              image: imageProvider,
-                              fit: BoxFit.cover,
+                    ? GestureDetector(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                ProfilePage(uid: widget.post.userId),
+                          ),
+                        ),
+                        child: CachedNetworkImage(
+                          imageUrl: postUser!.profileImageUrl,
+                          errorWidget: (context, url, error) =>
+                              const Icon(Icons.person),
+                          imageBuilder: (context, imageProvider) => Container(
+                            width: 25,
+                            height: 25,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                image: imageProvider,
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                         ),
                       )
                     : const Icon(Icons.person),
                 const SizedBox(width: 10),
-                RichText(
-                  text: TextSpan(
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Theme.of(context).colorScheme.inversePrimary,
-                    ),
-                    children: [
-                      TextSpan(
-                        text: widget.post.userName,
+                Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ProfilePage(uid: widget.post.userId),
+                        ),
+                      ),
+                      child: Text(
+                        widget.post.userName,
                         style: TextStyle(
+                          fontSize: 18,
+                          fontFamily: 'Poppins',
                           fontWeight: FontWeight.bold,
-                          fontFamily: 'Poppins',
+                          color: Theme.of(context).colorScheme.inversePrimary,
                         ),
                       ),
-                      TextSpan(
-                        text: ' : ${widget.post.text}',
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w500,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
+                    ),
+                    Text(
+                      ': ${widget.post.text}',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w500,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -405,7 +439,10 @@ class _PostTileState extends State<PostTile> {
                       itemBuilder: (context, index) {
                         final comment = post.comments[index];
                         //comment tile ui
-                        return CommentTile(comment: comment, postUser: postUser,);
+                        return CommentTile(
+                          comment: comment,
+                          postUser: postUser,
+                        );
                       },
                     );
                   }

@@ -4,17 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_media_app/features/authentication/domain/entities/app_user.dart';
 import 'package:social_media_app/features/authentication/presentation/cubits/auth_cubit.dart';
+import 'package:social_media_app/features/posts/presentation/cubits/post_cubits.dart';
+import 'package:social_media_app/features/posts/presentation/cubits/post_states.dart';
 import 'package:social_media_app/features/profile/presentation/components/bio_box.dart';
 import 'package:social_media_app/features/profile/presentation/cubits/profile_cubit.dart';
 import 'package:social_media_app/features/profile/presentation/cubits/profile_states.dart';
 import 'package:social_media_app/features/profile/presentation/pages/edit_profile_page.dart';
+import 'package:social_media_app/features/profile/presentation/pages/post_grid_tile.dart';
 
 class ProfilePage extends StatefulWidget {
   final String uid;
-  const ProfilePage({
-    super.key,
-    required this.uid
-  });
+  const ProfilePage({super.key, required this.uid});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -25,6 +25,8 @@ class _ProfilePageState extends State<ProfilePage> {
   late final profileCubit = context.read<ProfileCubit>();
   //current user
   late AppUser? currentUser = authCubit.currentUser;
+  //posts
+  int postCount = 0;
   //on startup
   @override
   void initState() {
@@ -140,6 +142,39 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     ],
                   ),
+                ),
+                //list of posts
+                BlocBuilder<PostCubits, PostStates>(
+                  builder: (context, state) {
+                    //posts loaded
+                    if (state is PostLoadedState) {
+                      final userPosts = state.posts
+                          .where((post) => post.userId == widget.uid)
+                          .toList();
+                      postCount = userPosts.length;
+                      return Expanded(
+                        child: PostGridTile(
+                          userPosts: userPosts,
+                          postCount: postCount,
+                        ),
+                      );
+                    } else if (state is PostLoadingState) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else {
+                      return const Center(
+                        child: Text(
+                          "No posts found..",
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(20, 158, 158, 158),
+                          ),
+                        ),
+                      );
+                    }
+                    //posts loading
+                  },
                 ),
               ],
             ),
